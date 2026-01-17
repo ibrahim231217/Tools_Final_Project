@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, CreditCard, CheckCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import CheckoutSteps from '../components/CheckoutSteps';
 
 const PaymentScreen = () => {
   const { savePaymentMethod } = useCart();
   const navigate = useNavigate();
   
-  const [paymentMethod, setPaymentMethod] = useState('PayPal');
+  const paymentMethod = 'Cash on Delivery';
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -26,7 +25,6 @@ const PaymentScreen = () => {
       </div>
 
       <div className="relative z-10 w-full max-w-lg px-6">
-        <CheckoutSteps step1 step2 step3 />
         
         <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -37,40 +35,23 @@ const PaymentScreen = () => {
             
             <form onSubmit={submitHandler} className="space-y-6">
                 <div className="space-y-4">
-                    <label className="text-sm font-bold uppercase tracking-wider text-secondary ml-1 mb-2 block">Select Provider</label>
+                    <label className="text-sm font-bold uppercase tracking-wider text-secondary ml-1 mb-2 block">Payment Option</label>
                     
-                    <label className="flex items-center p-5 rounded-2xl bg-white/50 border border-[#2c2926]/10 cursor-pointer hover:border-[#B08D55] hover:bg-white transition-all group">
+                    <label className="flex items-center p-5 rounded-2xl border-2 border-[#B08D55] bg-white transition-all">
                         <input 
                             type="radio" 
                             name="paymentMethod" 
-                            value="PayPal" 
-                            checked={paymentMethod === "PayPal"}
-                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            value="Cash on Delivery" 
+                            checked={true}
+                            readOnly
                             className="w-5 h-5 text-[#B08D55] focus:ring-[#B08D55] border-gray-300"
                         />
                         <div className="ml-4 flex items-center justify-between w-full">
-                            <span className="font-bold text-lg text-primary group-hover:text-[#B08D55] transition-colors">PayPal or Credit Card</span>
-                            <div className="flex gap-2 text-[#2c2926]/40">
-                                <CreditCard size={24} />
+                            <span className="font-bold text-lg text-primary">Cash on Delivery</span>
+                            <div className="flex gap-2 text-[#B08D55]">
+                                <CheckCircle size={24} />
                             </div>
                         </div>
-                    </label>
-
-                    <label className="flex items-center p-5 rounded-2xl bg-white/50 border border-[#2c2926]/10 cursor-pointer hover:border-[#B08D55] hover:bg-white transition-all group">
-                         <input 
-                             type="radio" 
-                             name="paymentMethod" 
-                             value="Stripe" 
-                             checked={paymentMethod === "Stripe"}
-                             onChange={(e) => setPaymentMethod(e.target.value)}
-                             className="w-5 h-5 text-[#B08D55] focus:ring-[#B08D55] border-gray-300"
-                         />
-                         <div className="ml-4 flex items-center justify-between w-full">
-                             <span className="font-bold text-lg text-primary group-hover:text-[#B08D55] transition-colors">Stripe</span>
-                             <div className="flex gap-2 text-[#2c2926]/40">
-                                 <CreditCard size={24} />
-                             </div>
-                         </div>
                     </label>
                 </div>
 

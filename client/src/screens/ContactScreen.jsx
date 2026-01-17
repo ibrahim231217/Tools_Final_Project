@@ -67,7 +67,7 @@ const ContactScreen = () => {
               </div>
             ))}
 
-            <div className="md:col-span-2 lg:col-span-3 mt-4">
+            {/* <div className="md:col-span-2 lg:col-span-3 mt-4">
               <div className="p-10 rounded-[40px] bg-[#2c2926] text-[#F2EFE9] shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="relative z-10 text-left">
                   <h3 className="font-serif font-bold text-2xl mb-2">
@@ -85,15 +85,19 @@ const ContactScreen = () => {
                 </div>
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
               </div>
-            </div>
+            </div> */}
+
+
           </div>
 
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-secondary/50">
+          {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-secondary/50">
             <span className="text-[10px] uppercase tracking-widest">
               Scroll to Message
             </span>
             <div className="w-[1px] h-8 bg-gradient-to-b from-secondary/50 to-transparent"></div>
-          </div>
+          </div> */}
+
+
         </div>
       </section>
 

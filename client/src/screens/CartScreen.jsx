@@ -6,7 +6,7 @@ import { Trash2, ArrowRight, ShoppingBag, Minus, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const CartScreen = () => {
-  const { cartItems, removeFromCart, addToCart } = useCart();
+  const { cartItems, removeFromCart } = useCart();
   const { userInfo } = useAuth();
   const navigate = useNavigate();
 
@@ -18,10 +18,6 @@ const CartScreen = () => {
     }
   };
 
-  // Helper function to get countInStock, assuming it's part of the item object
-  // If not, this would need to be fetched or passed differently.
-  // For now, let's assume a default or a property on the item.
-  const getCountInStock = (item) => item.countInStock || 10; // Default to 10 if not present
 
   return (
     <div className="min-h-screen flex flex-col relative pt-32 bg-[var(--color-surface)]">
@@ -92,27 +88,6 @@ const CartScreen = () => {
                       </div>
 
                       <div className="flex items-center gap-4">
-                        <select
-                          value={item.qty}
-                          onChange={async (e) => {
-                            const newQty = Number(e.target.value);
-                            await addToCart(
-                              {
-                                _id: item.product._id || item.product,
-                                ...item,
-                              },
-                              newQty,
-                            );
-                          }}
-                          className="bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-bold focus:outline-none focus:border-[#B08D55] transition-colors"
-                        >
-                          {[...Array(getCountInStock(item)).keys()].map((x) => (
-                            <option key={x + 1} value={x + 1}>
-                              {x + 1}
-                            </option>
-                          ))}
-                        </select>
-
                         <button
                           onClick={() =>
                             removeFromCart(item.product._id || item.product)
@@ -157,16 +132,8 @@ const CartScreen = () => {
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-secondary">
-                  <span>Shipping</span>
-                  <span className="text-xs bg-[#B08D55]/10 text-[#B08D55] px-2 py-1 rounded">
-                    Calculated at checkout
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-secondary">
-                  <span>Tax</span>
-                  <span className="text-xs bg-[#B08D55]/10 text-[#B08D55] px-2 py-1 rounded">
-                    Calculated at checkout
-                  </span>
+                  <span>Shipping Charge</span>
+                  <span className="font-medium text-primary">৳100</span>
                 </div>
                 <div className="pt-4 border-t border-[#2c2926]/10 flex justify-between items-center">
                   <span className="font-bold text-lg text-primary">
@@ -174,8 +141,8 @@ const CartScreen = () => {
                   </span>
                   <span className="font-bold text-2xl text-[#B08D55]">
                     ৳
-                    {cartItems
-                      .reduce((acc, item) => acc + item.qty * item.price, 0)
+                    {(cartItems
+                      .reduce((acc, item) => acc + item.qty * item.price, 0) + 100)
                       .toLocaleString()}
                   </span>
                 </div>

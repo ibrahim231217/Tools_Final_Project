@@ -9,11 +9,7 @@ import toast from "react-hot-toast";
 
 const ProductListScreen = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [sortBy, setSortBy] = useState("newest");
   const [quantities, setQuantities] = useState({});
 
   const { userInfo } = useAuth();
@@ -24,12 +20,11 @@ const ProductListScreen = () => {
       try {
         const { data } = await axios.get("/api/products");
         setProducts(data);
-        setFilteredProducts(data);
         const initialQty = {};
         data.forEach((p) => (initialQty[p._id] = 0));
         setQuantities(initialQty);
         setLoading(false);
-      } catch (error) {
+      } catch {
         toast.error("Failed to load products");
         setLoading(false);
       }
@@ -37,46 +32,7 @@ const ProductListScreen = () => {
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    let filtered = Array.isArray(products) ? [...products] : [];
 
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    }
-
-    if (selectedCategory !== "All") {
-      filtered = filtered.filter((p) => p.category === selectedCategory);
-    }
-
-    switch (sortBy) {
-      case "price-low":
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case "price-high":
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case "rating":
-        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        break;
-      case "newest":
-      default:
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        break;
-    }
-
-    setFilteredProducts(filtered);
-  }, [searchTerm, selectedCategory, products, sortBy]);
-
-  const categories = [
-    "All",
-    ...new Set(
-      (Array.isArray(products) ? products : []).map((p) => p.category),
-    ),
-  ];
 
   const updateQuantity = (productId, change) => {
     setQuantities((prev) => ({
@@ -119,7 +75,7 @@ const ProductListScreen = () => {
           viewport={{ once: true }}
           className="mb-6"
         >
-          <div className="flex flex-col lg:flex-row items-end justify-between gap-4 mb-4">
+          <div className="flex flex-col lg:flex-row items-end justify-between gap-4 mb-6">
             <div className="flex-1">
               <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-1">
                 Our Collection
@@ -129,51 +85,11 @@ const ProductListScreen = () => {
               </p>
             </div>
           </div>
-
-          <div className="bg-white/40 backdrop-blur-xl p-3 rounded-2xl border border-[#2c2926]/5 flex flex-col md:flex-row justify-between items-center gap-3">
-            <div className="flex flex-wrap gap-2 justify-center md:justify-start flex-1">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full font-bold text-xs transition-all ${
-                    selectedCategory === category
-                      ? "bg-[#2c2926] text-white shadow-lg scale-105"
-                      : "bg-white/50 border border-[#2c2926]/5 text-secondary hover:bg-white/80"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-4 pl-4 md:border-l border-[#2c2926]/10">
-              <span className="text-secondary font-medium text-xs whitespace-nowrap hidden md:block">
-                {filteredProducts?.length || 0} items
-              </span>
-
-              <div className="flex items-center gap-2">
-                <span className="text-secondary font-medium text-xs">
-                  Sort:
-                </span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-1.5 rounded-full bg-white/50 border border-[#2c2926]/10 text-primary font-bold text-xs focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 transition-all cursor-pointer"
-                >
-                  <option value="newest">Newest</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Top Rated</option>
-                </select>
-              </div>
-            </div>
-          </div>
         </motion.div>
 
-        {filteredProducts && filteredProducts.length > 0 ? (
+        {products && products.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredProducts.map((product, index) => (
+            {products.map((product, index) => (
               <motion.div
                 key={product._id}
                 initial={{ opacity: 0, y: 40 }}
@@ -289,17 +205,8 @@ const ProductListScreen = () => {
             className="text-center py-20"
           >
             <p className="text-secondary text-lg">
-              No products found matching your criteria.
+              No products available at the moment.
             </p>
-            <button
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("All");
-              }}
-              className="mt-6 px-8 py-3 rounded-full bg-[#2c2926] text-white font-bold hover:bg-[#4a4540] transition-colors"
-            >
-              Clear Filters
-            </button>
           </motion.div>
         )}
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, Users, Box, LogOut, Settings } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Box, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { motion } from 'framer-motion';
 
@@ -14,7 +14,6 @@ const AdminSidebar = () => {
         { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
         { name: 'Products', path: '/admin/productlist', icon: Box },
         { name: 'Orders', path: '/admin/orderlist', icon: ShoppingBag },
-        { name: 'Users', path: '/admin/userlist', icon: Users },
     ];
 
     return (
@@ -23,7 +22,7 @@ const AdminSidebar = () => {
             <div className="p-8 pb-4">
                  <Link to="/admin/dashboard" className="flex flex-col items-start leading-none group gap-[2px]">
                     <span className="font-serif text-2xl font-bold tracking-tight text-[#F2EFE9] group-hover:text-white transition-all duration-300">
-                      DARAZ
+                      LUXE
                     </span>
                     <span className="text-[0.5rem] font-sans font-bold tracking-[0.4em] text-[#B08D55] uppercase">
                       ADMIN PORTAL

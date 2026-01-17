@@ -37,12 +37,12 @@ const AboutScreen = () => {
   ];
 
   return (
-    <div className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth bg-[var(--color-surface)]">
+    <div className="h-screen overflow-y-auto scroll-smooth bg-[var(--color-surface)]">
       {/* Static Background - No Animation */}
       <div className="fixed inset-0 z-0 pointer-events-none bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-surface)]"></div>
 
       {/* Section 1: Hero (Story + Stats) */}
-      <section className="min-h-screen w-full snap-start flex items-center justify-center relative z-10 p-6">
+      <section className="min-h-screen w-full flex items-center justify-center relative z-10 p-6">
         <div className="container mx-auto max-w-[1400px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left: Story Text */}
@@ -110,7 +110,7 @@ const AboutScreen = () => {
       </section>
 
       {/* Section 2: Core Values */}
-      <section className="min-h-screen w-full snap-start flex items-center justify-center relative z-10 p-6">
+      <section className="min-h-screen w-full flex items-center justify-center relative z-10 p-6">
         <div className="container mx-auto max-w-[1400px]">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-primary">
@@ -146,7 +146,7 @@ const AboutScreen = () => {
       </section>
 
       {/* Section 3: Mission */}
-      <section className="min-h-screen w-full snap-start flex items-center justify-center relative z-10 p-6">
+      <section className="min-h-screen w-full flex items-center justify-center relative z-10 p-6">
         <div className="container mx-auto max-w-[1200px]">
           <div className="glass-panel p-16 md:p-24 rounded-[40px] bg-[#2c2926] text-[#F2EFE9] flex flex-col items-center text-center shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-[80px] translate-x-1/2 -translate-y-1/2"></div>

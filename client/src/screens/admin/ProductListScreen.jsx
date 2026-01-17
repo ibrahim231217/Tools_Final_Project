@@ -93,8 +93,7 @@ const ProductListScreen = () => {
                         <th className="px-8 py-5 text-left text-xs font-bold text-[#B08D55] uppercase tracking-widest">ID</th>
                         <th className="px-8 py-5 text-left text-xs font-bold text-[#B08D55] uppercase tracking-widest">Product</th>
                         <th className="px-8 py-5 text-left text-xs font-bold text-[#B08D55] uppercase tracking-widest">Price</th>
-                        <th className="px-8 py-5 text-left text-xs font-bold text-[#B08D55] uppercase tracking-widest">Category</th>
-                        <th className="px-8 py-5 text-left text-xs font-bold text-[#B08D55] uppercase tracking-widest">Brand</th>
+
                         <th className="px-8 py-5 text-right text-xs font-bold text-[#B08D55] uppercase tracking-widest">Actions</th>
                     </tr>
                     </thead>
@@ -111,10 +110,7 @@ const ProductListScreen = () => {
                             </div>
                         </td>
                         <td className="px-8 py-6 text-sm font-bold text-primary">৳{product.price?.toLocaleString()}</td>
-                        <td className="px-8 py-6 text-sm text-secondary">
-                            <span className="px-3 py-1 rounded-full bg-[#2c2926]/5 text-xs font-bold">{product.category}</span>
-                        </td>
-                        <td className="px-8 py-6 text-sm text-secondary">{product.brand}</td>
+
                         <td className="px-8 py-6 text-right">
                             <div className="flex items-center justify-end gap-3">
                                 <Link to={`/admin/product/${product._id}/edit`} className="p-2 rounded-full hover:bg-[#B08D55]/10 text-secondary hover:text-[#B08D55] transition-colors">

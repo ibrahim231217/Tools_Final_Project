@@ -3,20 +3,16 @@ import { useAuth } from "../context/AuthContext";
 import { FaUser, FaBoxOpen } from "react-icons/fa";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+
 import { motion } from "framer-motion";
 import {
   Loader,
   AlertCircle,
-  CheckCircle,
-  XCircle,
-  ArrowUpDown,
-  LogIn,
 } from "lucide-react";
 
 const ProfileScreen = () => {
   const { userInfo, setCredentials, logout } = useAuth();
-  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,8 +21,7 @@ const ProfileScreen = () => {
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [ordersError, setOrdersError] = useState(null);
-  const [sortBy, setSortBy] = useState("date"); // 'date', 'total', 'status'
-  const [sortOrder, setSortOrder] = useState("desc"); // 'asc', 'desc'
+
 
   useEffect(() => {
     if (!userInfo) {
@@ -42,38 +37,7 @@ const ProfileScreen = () => {
           const { data } = await axios.get("/api/orders/myorders", config);
 
           // Apply sorting
-          let sorted = [...data];
-          switch (sortBy) {
-            case "total":
-              sorted.sort((a, b) => {
-                const diff = a.totalPrice - b.totalPrice;
-                return sortOrder === "asc" ? diff : -diff;
-              });
-              break;
-            case "status":
-              sorted.sort((a, b) => {
-                const statusOrder = {
-                  Processing: 0,
-                  Shipped: 1,
-                  Delivered: 2,
-                  Cancelled: 3,
-                };
-                const aStatus = statusOrder[a.status] || 0;
-                const bStatus = statusOrder[b.status] || 0;
-                const diff = aStatus - bStatus;
-                return sortOrder === "asc" ? diff : -diff;
-              });
-              break;
-            case "date":
-            default:
-              sorted.sort((a, b) => {
-                const diff = new Date(a.createdAt) - new Date(b.createdAt);
-                return sortOrder === "asc" ? diff : -diff;
-              });
-              break;
-          }
-
-          setOrders(sorted);
+          setOrders(data);
           setLoadingOrders(false);
         } catch (error) {
           const message = error.response?.data?.message || error.message;
@@ -92,16 +56,9 @@ const ProfileScreen = () => {
 
       fetchOrders();
     }
-  }, [userInfo, sortBy, sortOrder, logout]);
+  }, [userInfo, logout]);
 
-  const toggleSort = (field) => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(field);
-      setSortOrder("desc");
-    }
-  };
+
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -136,19 +93,7 @@ const ProfileScreen = () => {
       <div className="flex-1 overflow-hidden container mx-auto px-6 relative z-10 max-w-7xl pb-6">
         <div className="h-full flex flex-col">
           {/* Log Out Button */}
-          <div className="mb-4 flex justify-end">
-            <button
-              onClick={() => {
-                logout();
-                navigate("/");
-                toast.success("Logged out successfully");
-              }}
-              className="py-2.5 px-6 rounded-full border border-red-200 text-red-600 font-bold hover:bg-red-50 transition-all flex items-center justify-center gap-2 text-sm"
-            >
-              <LogIn className="rotate-180" size={16} />
-              Log Out
-            </button>
-          </div>
+
 
           {/* Orders List - Full Width */}
           <div className="flex-1 overflow-hidden">
@@ -162,45 +107,7 @@ const ProfileScreen = () => {
                 <h2 className="text-xl font-serif font-bold text-primary flex items-center">
                   <FaBoxOpen className="mr-3 text-[#B08D55]" /> My Orders
                 </h2>
-                {orders.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-secondary font-medium text-xs">
-                      Sort:
-                    </span>
-                    <button
-                      onClick={() => toggleSort("date")}
-                      className={`px-3 py-1 rounded-full font-medium text-[10px] transition-all flex items-center gap-1 ${
-                        sortBy === "date"
-                          ? "bg-[#2c2926] text-white"
-                          : "bg-white/50 border border-[#2c2926]/10 text-secondary hover:bg-white"
-                      }`}
-                    >
-                      Date
-                      {sortBy === "date" && (
-                        <ArrowUpDown
-                          size={10}
-                          className={sortOrder === "asc" ? "" : "rotate-180"}
-                        />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => toggleSort("total")}
-                      className={`px-3 py-1 rounded-full font-medium text-[10px] transition-all flex items-center gap-1 ${
-                        sortBy === "total"
-                          ? "bg-[#2c2926] text-white"
-                          : "bg-white/50 border border-[#2c2926]/10 text-secondary hover:bg-white"
-                      }`}
-                    >
-                      Total
-                      {sortBy === "total" && (
-                        <ArrowUpDown
-                          size={10}
-                          className={sortOrder === "asc" ? "" : "rotate-180"}
-                        />
-                      )}
-                    </button>
-                  </div>
-                )}
+
               </div>
 
               {loadingOrders ? (
@@ -232,10 +139,7 @@ const ProfileScreen = () => {
                         <th className="pb-3 font-bold uppercase tracking-wider text-xs text-secondary">
                           Status
                         </th>
-                        <th className="pb-3 font-bold uppercase tracking-wider text-xs text-secondary">
-                          Paid
-                        </th>
-                        <th className="pb-3 font-bold uppercase tracking-wider text-xs text-secondary"></th>
+
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#2c2926]/5">
@@ -274,39 +178,7 @@ const ProfileScreen = () => {
                                     : order.status}
                             </span>
                           </td>
-                          <td className="py-3">
-                            {order.isPaid ? (
-                              <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold flex w-fit items-center gap-1">
-                                <CheckCircle size={10} /> Paid
-                              </span>
-                            ) : (
-                              <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-bold flex w-fit items-center gap-1">
-                                <XCircle size={10} /> Pending
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-3 text-right">
-                            <Link
-                              to={`/order/${order._id}`}
-                              className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#2c2926]/10 text-primary hover:bg-[#B08D55] hover:text-white transition-all shadow-sm"
-                            >
-                              <span className="sr-only">Details</span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M5 12h14" />
-                                <path d="m12 5 7 7-7 7" />
-                              </svg>
-                            </Link>
-                          </td>
+
                         </tr>
                       ))}
                     </tbody>

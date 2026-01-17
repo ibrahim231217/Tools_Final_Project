@@ -6,7 +6,6 @@ import { useAuth } from '../context/AuthContext';
 import { CheckCircle, MapPin, Truck, CreditCard, AlertCircle, Loader } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import CheckoutSteps from '../components/CheckoutSteps';
 
 const PlaceOrderScreen = () => {
   const { cartItems, shippingAddress, paymentMethod, clearCart } = useCart();
@@ -15,8 +14,8 @@ const PlaceOrderScreen = () => {
 
   // Calculate prices
   const itemsPrice = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
-  const shippingPrice = itemsPrice > 10000 ? 0 : 200;
-  const taxPrice = Number((0.15 * itemsPrice).toFixed(0)); // Rounded tax
+  const shippingPrice = 100; // Fixed shipping charge
+  const taxPrice = 0; // No tax
   const totalPrice = (itemsPrice + shippingPrice + taxPrice).toFixed(0); // Rounded total
 
   useEffect(() => {
@@ -74,7 +73,6 @@ const PlaceOrderScreen = () => {
             {/* Left Column: Review Details */}
             <div className="lg:col-span-2 h-full flex flex-col overflow-hidden">
                 <div className="flex-shrink-0 mb-8">
-                    <CheckoutSteps step1 step2 step3 step4 />
                     <div className="text-center mt-8 md:text-left">
                         <h1 className="text-4xl font-serif font-bold text-primary mb-2">Order Review</h1>
                         <p className="text-secondary">Please review your order details before confirming.</p>
@@ -171,12 +169,8 @@ const PlaceOrderScreen = () => {
                                 <span>৳{Number(itemsPrice).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between text-secondary">
-                                <span>Shipping</span>
+                                <span>Shipping Charge</span>
                                 <span>৳{Number(shippingPrice).toLocaleString()}</span>
-                            </div>
-                            <div className="flex justify-between text-secondary">
-                                <span>Tax</span>
-                                <span>৳{Number(taxPrice).toLocaleString()}</span>
                             </div>
                             <div className="border-t border-[#2c2926]/10 pt-6 flex justify-between">
                                 <span className="font-bold text-xl text-primary">Total</span>

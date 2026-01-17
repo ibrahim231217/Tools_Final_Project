@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import CheckoutSteps from '../components/CheckoutSteps';
 
 const ShippingScreen = () => {
     const { shippingAddress = {}, saveShippingAddress } = useCart();
@@ -23,7 +22,6 @@ const ShippingScreen = () => {
     return (
         <div className="min-h-screen pt-32 pb-40 relative bg-[var(--color-surface)]">
             <div className="relative z-10 w-full max-w-2xl px-6 mx-auto">
-                <CheckoutSteps step1 step2 />
 
                 <div className="glass-panel p-10 rounded-[40px] border border-[#2c2926]/5 bg-white/60 shadow-2xl mt-8">
                     <h1 className="text-3xl font-serif font-bold text-primary mb-8 text-center">Shipping Details</h1>
