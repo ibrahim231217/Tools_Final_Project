@@ -1,12 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, Quote, User } from 'lucide-react';
 import axios from 'axios';
 
 const ReviewSlider = () => {
   const [reviews, setReviews] = useState([]);
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const getDefaultReviews = () => [
+    {
+      id: 1,
+      name: "Tanvir Ahmed",
+      rating: 5,
+      comment: "The quality is absolutely phenomenal. Best authentic products I've found in Dhaka. Highly recommended!",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop"
+    },
+    {
+      id: 2,
+      name: "Sadia Islam",
+      rating: 5,
+      comment: "Fast delivery to Gulshan and the packaging was beautiful. A truly luxury experience.",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
+    },
+    {
+      id: 3,
+      name: "Rahim Uddin",
+      rating: 4,
+      comment: "Great aesthetics and solid build quality. Fits perfectly in my office setup.",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop"
+    }
+  ];
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -37,29 +61,7 @@ const ReviewSlider = () => {
     fetchReviews();
   }, []);
 
-  const getDefaultReviews = () => [
-    {
-      id: 1,
-      name: "Tanvir Ahmed",
-      rating: 5,
-      comment: "The quality is absolutely phenomenal. Best authentic products I've found in Dhaka. Highly recommended!",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop"
-    },
-    {
-      id: 2,
-      name: "Sadia Islam",
-      rating: 5,
-      comment: "Fast delivery to Gulshan and the packaging was beautiful. A truly luxury experience.",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
-    },
-    {
-      id: 3,
-      name: "Rahim Uddin",
-      rating: 4,
-      comment: "Great aesthetics and solid build quality. Fits perfectly in my office setup.",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop"
-    }
-  ];
+
 
   useEffect(() => {
     if (reviews.length === 0) return;
@@ -114,8 +116,8 @@ const ReviewSlider = () => {
             className="flex flex-col items-center text-center max-w-2xl"
           >
             <div className="relative mb-6">
-               <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#B08D55] p-1">
-                 <img src={reviews[index].image} alt={reviews[index].name} className="w-full h-full object-cover rounded-full" />
+               <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#B08D55] p-1 flex items-center justify-center bg-[#B08D55]/5">
+                 <User size={40} className="text-[#B08D55]" />
                </div>
                <div className="absolute -bottom-2 -right-2 bg-[#B08D55] text-white p-1 rounded-full shadow-lg">
                  <Quote size={12} fill="currentColor" />

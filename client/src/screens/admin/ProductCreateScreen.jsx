@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Save,
@@ -12,50 +12,73 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { motion } from "framer-motion";
 
-const ProductEditScreen = () => {
-  const { id } = useParams();
+const ProductCreateScreen = () => {
   const navigate = useNavigate();
   const { userInfo } = useAuth();
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState("");
-  const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [description, setDescription] = useState("");
-  const [countInStock, setCountInStock] = useState(0);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const { data } = await axios.get(`/api/products/${id}`);
-        setName(data.name);
-        setPrice(data.price);
-        setImage(data.image);
-        setImagePreview(data.image);
-        setDescription(data.description);
-        setCountInStock(data.countInStock);
-        setLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.message || err.message);
-        setLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [id]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
+      // Limit file size to 500KB
+      if (file.size > 500000) {
+        toast.error("Image size must be less than 500KB");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setImage(reader.result);
+        // Compress image
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          // Set max dimensions
+          let width = img.width;
+          let height = img.height;
+          const maxWidth = 800;
+          const maxHeight = 800;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert to blob with compression
+          canvas.toBlob(
+            (blob) => {
+              const compressedReader = new FileReader();
+              compressedReader.onloadend = () => {
+                setImagePreview(compressedReader.result);
+                setImage(compressedReader.result);
+              };
+              compressedReader.readAsDataURL(blob);
+            },
+            "image/jpeg",
+            0.75,
+          );
+        };
       };
       reader.readAsDataURL(file);
     }
@@ -63,7 +86,14 @@ const ProductEditScreen = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (!name || !price || !description) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     try {
+      setLoading(true);
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -71,44 +101,36 @@ const ProductEditScreen = () => {
         },
       };
 
-      await axios.put(
-        `/api/products/${id}`,
+      const { data } = await axios.post(
+        `/api/products`,
         {
           name,
-          price,
+          price: parseFloat(price),
           image,
           description,
-          countInStock,
-          brand: "Sample brand",
+          countInStock: 0,
           category: "Sample category",
+          brand: "Sample brand",
         },
         config,
       );
-      toast.success("Product updated successfully");
+
+      toast.success("Product created successfully");
       navigate("/admin/productlist");
+      // Force refresh the product list
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Update failed");
+      toast.error(err.response?.data?.message || "Create failed");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader className="animate-spin text-[#B08D55]" size={32} />
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="flex justify-center items-center h-64 text-red-500">
-        <AlertCircle className="mr-2" /> {error}
-      </div>
-    );
-
   return (
     <div className="w-full relative tracking-wide max-w-5xl mx-auto h-full flex flex-col justify-center">
-      {/* Static Background - No Animations */}
-
       <div className="flex items-center justify-between mb-4">
         <Link
           to="/admin/productlist"
@@ -117,7 +139,7 @@ const ProductEditScreen = () => {
           <ArrowLeft className="mr-2" size={16} /> Back
         </Link>
         <h1 className="text-2xl font-serif font-bold text-primary">
-          Edit Product
+          Add New Product
         </h1>
       </div>
 
@@ -132,7 +154,7 @@ const ProductEditScreen = () => {
             <div className="col-span-8 space-y-3">
               <div className="space-y-1">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                  Product Name
+                  Product Name *
                 </label>
                 <input
                   type="text"
@@ -140,41 +162,33 @@ const ProductEditScreen = () => {
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
                   placeholder="Product Name"
+                  required
                 />
               </div>
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                  Price (৳)
+                  Price (৳) *
                 </label>
                 <input
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
+                  required
                 />
               </div>
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                  Stock
-                </label>
-                <input
-                  type="number"
-                  value={countInStock}
-                  onChange={(e) => setCountInStock(e.target.value)}
-                  className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                  Description
+                  Description *
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm min-h-[80px] resize-none"
+                  placeholder="Product Description"
+                  required
                 />
               </div>
             </div>
@@ -186,9 +200,9 @@ const ProductEditScreen = () => {
                   Image Preview
                 </label>
                 <div className="flex-1 rounded-xl bg-white/40 border border-[#2c2926]/10 flex items-center justify-center relative overflow-hidden group min-h-[140px]">
-                  {image ? (
+                  {imagePreview ? (
                     <img
-                      src={image}
+                      src={imagePreview}
                       alt="Preview"
                       className="w-full h-full object-contain p-2"
                     />
@@ -215,9 +229,18 @@ const ProductEditScreen = () => {
           <div className="pt-2 flex justify-end border-t border-[#2c2926]/5">
             <button
               type="submit"
-              className="flex items-center gap-2 bg-[#2c2926] text-[#F2EFE9] px-6 py-2.5 rounded-lg font-bold hover:bg-[#4a4540] transition-colors shadow-lg hover:translate-y-[-1px] text-sm"
+              disabled={loading}
+              className="flex items-center gap-2 bg-[#2c2926] text-[#F2EFE9] px-6 py-2.5 rounded-lg font-bold hover:bg-[#4a4540] transition-colors shadow-lg hover:translate-y-[-1px] text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Save size={16} /> Update Product
+              {loading ? (
+                <>
+                  <Loader size={16} className="animate-spin" /> Creating...
+                </>
+              ) : (
+                <>
+                  <Save size={16} /> Create Product
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -226,4 +249,4 @@ const ProductEditScreen = () => {
   );
 };
 
-export default ProductEditScreen;
+export default ProductCreateScreen;

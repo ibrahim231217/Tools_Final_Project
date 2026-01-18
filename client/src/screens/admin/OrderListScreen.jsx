@@ -131,59 +131,6 @@ const OrderListScreen = () => {
         </div>
 
         {/* Sort Controls */}
-        <div className="mb-8 flex gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="text-secondary font-medium text-sm">Sort by:</span>
-            <button
-              onClick={() => toggleSort("date")}
-              className={`px-4 py-2 rounded-full font-medium text-sm transition-all flex items-center gap-2 ${
-                sortBy === "date"
-                  ? "bg-[#2c2926] text-white"
-                  : "bg-white/40 border border-[#2c2926]/10 text-secondary hover:bg-white/60"
-              }`}
-            >
-              Date
-              {sortBy === "date" && (
-                <ArrowUpDown
-                  size={14}
-                  className={sortOrder === "asc" ? "" : "rotate-180"}
-                />
-              )}
-            </button>
-            <button
-              onClick={() => toggleSort("total")}
-              className={`px-4 py-2 rounded-full font-medium text-sm transition-all flex items-center gap-2 ${
-                sortBy === "total"
-                  ? "bg-[#2c2926] text-white"
-                  : "bg-white/40 border border-[#2c2926]/10 text-secondary hover:bg-white/60"
-              }`}
-            >
-              Total
-              {sortBy === "total" && (
-                <ArrowUpDown
-                  size={14}
-                  className={sortOrder === "asc" ? "" : "rotate-180"}
-                />
-              )}
-            </button>
-            <button
-              onClick={() => toggleSort("status")}
-              className={`px-4 py-2 rounded-full font-medium text-sm transition-all flex items-center gap-2 ${
-                sortBy === "status"
-                  ? "bg-[#2c2926] text-white"
-                  : "bg-white/40 border border-[#2c2926]/10 text-secondary hover:bg-white/60"
-              }`}
-            >
-              Status
-              {sortBy === "status" && (
-                <ArrowUpDown
-                  size={14}
-                  className={sortOrder === "asc" ? "" : "rotate-180"}
-                />
-              )}
-            </button>
-          </div>
-        </div>
       </div>
 
       <div className="flex-1 overflow-hidden relative z-10 container mx-auto px-6 max-w-7xl pb-6">

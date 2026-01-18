@@ -22,10 +22,12 @@ import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 // Admin Screens
 import DashboardScreen from "./screens/admin/DashboardScreen";
 import AdminProductListScreen from "./screens/admin/ProductListScreen";
+import ProductCreateScreen from "./screens/admin/ProductCreateScreen";
 import ProductEditScreen from "./screens/admin/ProductEditScreen";
 import OrderListScreen from "./screens/admin/OrderListScreen";
 import UserListScreen from "./screens/admin/UserListScreen";
 import UserEditScreen from "./screens/admin/UserEditScreen";
+import MessageListScreen from "./screens/admin/MessageListScreen";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
@@ -107,12 +109,17 @@ function App() {
                       element={<AdminProductListScreen />}
                     />
                     <Route
+                      path="product/create"
+                      element={<ProductCreateScreen />}
+                    />
+                    <Route
                       path="product/:id/edit"
                       element={<ProductEditScreen />}
                     />
                     <Route path="orderlist" element={<OrderListScreen />} />
                     <Route path="userlist" element={<UserListScreen />} />
                     <Route path="user/:id/edit" element={<UserEditScreen />} />
+                    <Route path="messages" element={<MessageListScreen />} />
                   </Route>
                 </Route>
               </Routes>
