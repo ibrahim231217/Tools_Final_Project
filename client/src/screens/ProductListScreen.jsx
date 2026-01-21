@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, Eye, Plus, Minus, ShoppingCart } from "lucide-react";
+import { Plus, Minus, ShoppingCart } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -31,8 +31,6 @@ const ProductListScreen = () => {
     };
     fetchProducts();
   }, []);
-
-
 
   const updateQuantity = (productId, change) => {
     setQuantities((prev) => ({
@@ -118,11 +116,6 @@ const ProductListScreen = () => {
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.3 }}
                     />
-                    <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="glass-ultra p-2 rounded-full shadow-lg hover:bg-[#B08D55] hover:text-white transition-colors">
-                        <Eye size={16} />
-                      </div>
-                    </div>
                   </Link>
 
                   <div className="flex-1 flex flex-col relative">
@@ -136,61 +129,11 @@ const ProductListScreen = () => {
                     </Link>
 
                     <div className="mt-auto">
-                      <div className="flex justify-between items-center mb-2">
+                      <div className="mb-2">
                         <span className="text-lg font-bold text-primary">
                           ৳{product.price?.toLocaleString()}
                         </span>
-                        <div className="flex items-center gap-1 text-[#B08D55]">
-                          <Star size={12} fill="currentColor" />
-                          <span className="text-xs font-bold text-primary">
-                            {product.rating || 0}
-                          </span>
-                        </div>
                       </div>
-
-                      {product.countInStock > 0 && (
-                        <>
-                          {!quantities[product._id] ||
-                          quantities[product._id] === 0 ? (
-                            <button
-                              onClick={() => {
-                                if (!userInfo) {
-                                  toast.error(
-                                    "Please login to add items to cart",
-                                  );
-                                  return;
-                                }
-                                updateQuantity(product._id, 1);
-                                handleAddToCart(product);
-                              }}
-                              className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center bg-[#2c2926] text-white rounded-full hover:bg-[#4a4540] transition-all shadow-lg hover:scale-110"
-                            >
-                              <Plus size={16} />
-                            </button>
-                          ) : (
-                            <div className="w-full flex items-center bg-white/50 rounded-lg border border-[#2c2926]/10">
-                              <button
-                                onClick={() => updateQuantity(product._id, -1)}
-                                className="flex-1 p-2 hover:bg-[#2c2926]/5 transition-colors"
-                              >
-                                <Minus size={14} />
-                              </button>
-                              <span className="px-3 text-sm font-bold min-w-[32px] text-center">
-                                {quantities[product._id]}
-                              </span>
-                              <button
-                                onClick={async () => {
-                                  updateQuantity(product._id, 1);
-                                  await handleAddToCart(product);
-                                }}
-                                className="flex-1 p-2 hover:bg-[#2c2926]/5 transition-colors"
-                              >
-                                <Plus size={14} />
-                              </button>
-                            </div>
-                          )}
-                        </>
-                      )}
                     </div>
                   </div>
                 </motion.div>

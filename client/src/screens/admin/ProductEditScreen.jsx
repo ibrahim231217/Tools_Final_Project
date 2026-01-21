@@ -20,10 +20,10 @@ const ProductEditScreen = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState("");
-  const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState("");
-  const [countInStock, setCountInStock] = useState(0);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [description, setDescription] = useState("");
+  const [countInStock, setCountInStock] = useState(0);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,10 +36,9 @@ const ProductEditScreen = () => {
         setName(data.name);
         setPrice(data.price);
         setImage(data.image);
-        setBrand(data.brand);
-        setCategory(data.category);
-        setCountInStock(data.countInStock);
+        setImagePreview(data.image);
         setDescription(data.description);
+        setCountInStock(data.countInStock);
         setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
@@ -48,6 +47,19 @@ const ProductEditScreen = () => {
     };
     fetchProduct();
   }, [id]);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -65,10 +77,10 @@ const ProductEditScreen = () => {
           name,
           price,
           image,
-          brand,
-          category,
-          countInStock,
           description,
+          countInStock,
+          brand: "Sample brand",
+          category: "Sample category",
         },
         config,
       );
@@ -131,40 +143,28 @@ const ProductEditScreen = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                    Price (৳)
-                  </label>
-                  <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                    Stock
-                  </label>
-                  <input
-                    type="number"
-                    value={countInStock}
-                    onChange={(e) => setCountInStock(e.target.value)}
-                    className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
-                  />
-                </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
+                  Price (৳)
+                </label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
+                  Stock
+                </label>
+                <input
+                  type="number"
+                  value={countInStock}
+                  onChange={(e) => setCountInStock(e.target.value)}
+                  className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
+                />
               </div>
 
               <div className="space-y-1">
@@ -200,25 +200,13 @@ const ProductEditScreen = () => {
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                  Image URL
+                  Upload Photo
                 </label>
                 <input
-                  type="text"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                  className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm truncate"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#B08D55] ml-1">
-                  Brand
-                </label>
-                <input
-                  type="text"
-                  value={brand}
-                  onChange={(e) => setBrand(e.target.value)}
-                  className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="w-full bg-white/50 border border-[#2c2926]/10 rounded-lg px-3 py-2 text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#B08D55]/20 focus:border-[#B08D55] transition-all text-sm file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-[#B08D55]/20 file:text-[#B08D55] file:font-bold file:cursor-pointer hover:file:bg-[#B08D55]/30"
                 />
               </div>
             </div>

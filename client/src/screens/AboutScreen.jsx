@@ -1,7 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Globe, Users, Trophy, Award, Target, Heart } from "lucide-react";
 
 const AboutScreen = () => {
+  const navigate = useNavigate();
+
   const stats = [
     {
       icon: <Users />,
@@ -37,7 +40,7 @@ const AboutScreen = () => {
   ];
 
   return (
-    <div className="h-screen overflow-y-auto scroll-smooth bg-[var(--color-surface)]">
+    <div className="w-full bg-[var(--color-surface)]">
       {/* Static Background - No Animation */}
       <div className="fixed inset-0 z-0 pointer-events-none bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-surface)]"></div>
 
@@ -62,9 +65,9 @@ const AboutScreen = () => {
                 </h1>
 
                 <p className="text-lg text-secondary max-w-xl font-light leading-relaxed mb-8">
-                 LUXE  is more than a marketplace. We're curators
-                  of exceptional products, bridging the gap between aspiration
-                  and reality through thoughtful selection and premium service.
+                  LUXE is more than a marketplace. We're curators of exceptional
+                  products, bridging the gap between aspiration and reality
+                  through thoughtful selection and premium service.
                 </p>
 
                 <div className="grid grid-cols-3 gap-4">
@@ -163,7 +166,10 @@ const AboutScreen = () => {
                 selection to ensure it meets our standards of quality, design,
                 and value.
               </p>
-              <button className="px-10 py-4 rounded-full bg-white text-[#2c2926] font-bold text-lg hover:bg-white/90 transition-colors">
+              <button
+                onClick={() => navigate("/contact")}
+                className="px-10 py-4 rounded-full bg-white text-[#2c2926] font-bold text-lg hover:bg-white/90 transition-colors"
+              >
                 Contact Us
               </button>
             </div>

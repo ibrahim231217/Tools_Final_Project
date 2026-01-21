@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { CheckCircle, MapPin, Truck, CreditCard, AlertCircle, Loader } from 'lucide-react';
+import { MapPin, Truck, CreditCard, AlertCircle, Loader } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
@@ -187,10 +187,7 @@ const PlaceOrderScreen = () => {
                         Confirm Order
                     </button>
                     
-                    <div className="mt-8 flex items-center justify-center gap-2 text-secondary/60 text-xs font-medium">
-                        <CheckCircle size={14} />
-                        <span>Secure SSL Encryption</span>
-                    </div>
+
                 </motion.div>
             </div>
         </div>
