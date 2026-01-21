@@ -14,12 +14,13 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import ReviewSlider from "../components/ReviewSlider";
+import SimpleHeroSlider from "../components/SimpleHeroSlider";
 
 const categories = [
   {
     name: "Audio",
     image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+      "https://images.unsplash.com/photo-1589739900266-43b2843f4c12?q=80&w=693&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   }, // Studio Headphone
   {
     name: "Watches",
@@ -62,49 +63,6 @@ const scrollingCategories = [
       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80",
   }, // Studio Bottle
 ];
-
-const VerticalMarquee = ({ items, speed = 20, reverse = false }) => (
-  <div
-    className="flex flex-col gap-6 overflow-hidden h-[80vh] max-h-[600px] relative" // Adjusted height to fit viewport
-    style={{
-      maskImage:
-        "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-      WebkitMaskImage:
-        "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-    }}
-  >
-    <motion.div
-      initial={{ y: reverse ? -1000 : 0 }}
-      animate={{ y: reverse ? 0 : -1000 }}
-      transition={{
-        duration: speed,
-        repeat: Infinity,
-        ease: "linear",
-      }}
-      className="flex flex-col gap-8 pb-8"
-    >
-      {[...items, ...items, ...items].map((cat, i) => (
-        <div
-          key={i}
-          className="flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-opacity"
-        >
-          <div className="w-64 h-80 rounded-[40px] overflow-hidden shadow-2xl border border-white/20">
-            {" "}
-            {/* Bigger Cards */}
-            <img
-              src={cat.image}
-              alt={cat.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <span className="text-base font-bold text-secondary tracking-widest uppercase">
-            {cat.name}
-          </span>
-        </div>
-      ))}
-    </motion.div>
-  </div>
-);
 
 // Quick View Modal
 const QuickViewModal = ({ product, isOpen, onClose }) => (
@@ -310,7 +268,6 @@ const HomeScreen = () => {
     };
     fetchProducts();
   }, []);
-  // Removed unused scroll hooks for performance
 
   return (
     <div className="h-screen overflow-y-auto scroll-smooth bg-[var(--color-surface)]">
@@ -323,17 +280,6 @@ const HomeScreen = () => {
           <div className="grid lg:grid-cols-2 gap-8 items-center max-w-[1500px] mx-auto w-full">
             {/* Left: Commercial Messaging */}
             <div>
-              {/* <motion.div 
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 border border-[#2c2926]/10 bg-white/40 backdrop-blur-sm"
-              >
-                <Sparkles size={16} className="text-[#B08D55]" />
-                <span className="text-sm font-bold text-primary tracking-wide">NEW COLLECTION</span>
-              </motion.div> */}
-
               <h1 className="text-7xl md:text-8xl lg:text-9xl font-serif font-bold tracking-tight text-primary mb-6 leading-[0.9]">
                 Timeless <br />
                 <span className="italic text-secondary">Elegance</span>
@@ -384,26 +330,21 @@ const HomeScreen = () => {
               </div>
             </div>
 
-            {/* Right: Scrolling Vertical Marquees */}
+            {/* Right: Sliding Hero Banner */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5, delay: 0.5 }}
-              className="relative flex gap-8 justify-center h-full max-h-[80vh] overflow-hidden items-center"
+              className="relative flex justify-center h-full items-center"
             >
-              <VerticalMarquee
-                items={scrollingCategories.slice(0, 4)}
-                speed={40}
-              />
-              <VerticalMarquee
-                items={scrollingCategories.slice(4, 8)}
-                speed={50}
-                reverse
+              <SimpleHeroSlider
+                slides={scrollingCategories}
               />
             </motion.div>
           </div>
         </div>
       </section>
+      {/* ... rest of the file */}
 
       {/* Section 2: Latest Arrivals */}
       <section className="min-h-screen w-full flex items-center justify-center relative z-10 py-20">
