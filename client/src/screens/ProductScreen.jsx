@@ -213,7 +213,7 @@ const ProductScreen = () => {
                         {qty}
                       </span>
                       <button
-                        onClick={() => setQty(Math.min(99, qty + 1))}
+                        onClick={() => setQty(Math.min(10000, qty + 1))}
                         className="text-xl text-primary hover:text-[#B08D55] w-8 h-8 flex items-center justify-center transition-colors"
                       >
                         +

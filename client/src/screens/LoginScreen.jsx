@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Mail, Lock, LogIn, Chrome, Github, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { auth, googleProvider, githubProvider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup, fetchSignInMethodsForEmail, linkWithCredential, GithubAuthProvider } from "firebase/auth";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -16,18 +16,26 @@ const LoginScreen = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-const handleSocialLogin = async (provider, providerName) => {
+  const handleSocialLogin = async (provider, providerName) => {
     setError("");
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
+      console.log("Social Login Result:", user);
+
+      // Check if email is available (GitHub might hide it if private)
+      if (!user.email) {
+          setError("No email provided by social login. Please ensure your email is public or use Email/Password login.");
+          toast.error("No email returned from GitHub. Please enable public email in GitHub settings.");
+          return;
+      }
+
       const { data } = await axios.post(
         "/api/users/social-login",
         {
           email: user.email,
-          // If user.displayName is null, we send null and let the backend handle the fallback
-          name: user.displayName || "", 
+          name: user.displayName || user.email.split('@')[0], // Fallback name
           photoUrl: user.photoURL || "",
           provider: providerName,
         }
@@ -37,8 +45,48 @@ const handleSocialLogin = async (provider, providerName) => {
       toast.success(`Welcome back, ${data.name}!`);
       navigate(data.isAdmin ? "/admin/dashboard" : "/");
     } catch (err) {
-      setError(err.response?.data?.message || "Social Login Failed");
-      toast.error(err.response?.data?.message || "Social Login Failed");
+      console.error("Social Login Error:", err);
+      
+      // Handle Account Exists with Different Credential
+      if (err.code === "auth/account-exists-with-different-credential") {
+        const email = err.customData.email;
+        const pendingCredential = GithubAuthProvider.credentialFromError(err);
+
+        try {
+          const methods = await fetchSignInMethodsForEmail(auth, email);
+          
+          if (methods.includes("google.com")) {
+            toast.error("You already have an account with Google. Linking GitHub...", { duration: 5000 });
+            const result = await signInWithPopup(auth, googleProvider);
+            await linkWithCredential(result.user, pendingCredential);
+            
+            // Proceed with login after linking
+            const user = result.user;
+             const { data } = await axios.post(
+                "/api/users/social-login",
+                {
+                  email: user.email,
+                  name: user.displayName || user.email.split('@')[0],
+                  photoUrl: user.photoURL || "",
+                  provider: providerName,
+                }
+              );
+
+              login(data);
+              toast.success(`Welcome back, ${data.name}! GitHub linked successfully.`);
+              navigate(data.isAdmin ? "/admin/dashboard" : "/");
+            return;
+          }
+        } catch (linkErr) {
+           console.error("Linking Error:", linkErr);
+           toast.error("Failed to link account automatically not supported.");
+        }
+      }
+
+      // Show the actual error message from Firebase or Backend
+      const errorMessage = err.response?.data?.message || err.message || "Social Login Failed";
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 

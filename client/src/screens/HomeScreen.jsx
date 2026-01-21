@@ -17,22 +17,22 @@ import ReviewSlider from "../components/ReviewSlider";
 
 const categories = [
   {
-    name: "Audio",
+    
     image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+      "https://images.unsplash.com/photo-1589739900266-43b2843f4c12?q=80&w=693&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   }, // Studio Headphone
   {
-    name: "Watches",
+    
     image:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80",
+      "https://images.unsplash.com/photo-1591337676887-a217a6970a8a?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   }, // Studio Watch
   {
-    name: "Living",
+   
     image:
       "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=800&q=80",
   }, // Studio Chair
   {
-    name: "Optics",
+    
     image:
       "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80",
   }, // Studio Camera
@@ -42,69 +42,77 @@ const categories = [
 const scrollingCategories = [
   ...categories,
   {
-    name: "Travel",
+    
     image:
       "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",
   }, // Studio Bag
   {
-    name: "Work",
+    
     image:
       "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&q=80",
   }, // Studio Desk/Plant
   {
-    name: "Decor",
+    
     image:
       "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?w=800&q=80",
   }, // Studio Vase/Lamp
   {
-    name: "Wellness",
+    
     image:
       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80",
   }, // Studio Bottle
 ];
 
-const VerticalMarquee = ({ items, speed = 20, reverse = false }) => (
-  <div
-    className="flex flex-col gap-6 overflow-hidden h-[80vh] max-h-[600px] relative" // Adjusted height to fit viewport
-    style={{
-      maskImage:
-        "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-      WebkitMaskImage:
-        "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-    }}
-  >
-    <motion.div
-      initial={{ y: reverse ? -1000 : 0 }}
-      animate={{ y: reverse ? 0 : -1000 }}
-      transition={{
-        duration: speed,
-        repeat: Infinity,
-        ease: "linear",
-      }}
-      className="flex flex-col gap-8 pb-8"
-    >
-      {[...items, ...items, ...items].map((cat, i) => (
-        <div
-          key={i}
-          className="flex flex-col items-center gap-3 opacity-80 hover:opacity-100 transition-opacity"
+const SimpleHeroSlider = ({ items }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % items.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [items.length]);
+
+  return (
+    <div className="relative w-full h-[600px] rounded-[40px] overflow-hidden shadow-2xl border border-white/20">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="absolute inset-0"
         >
-          <div className="w-64 h-80 rounded-[40px] overflow-hidden shadow-2xl border border-white/20">
-            {" "}
-            {/* Bigger Cards */}
-            <img
-              src={cat.image}
-              alt={cat.name}
-              className="w-full h-full object-cover"
-            />
+          <img
+            src={items[currentIndex].image}
+            alt={items[currentIndex].name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/20" /> {/* Subtle overlay */}
+          <div className="absolute bottom-8 left-8 text-white">
+             <span className="text-sm font-bold uppercase tracking-widest mb-2 block bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full w-fit">
+              {items[currentIndex].name}
+            </span>
           </div>
-          <span className="text-base font-bold text-secondary tracking-widest uppercase">
-            {cat.name}
-          </span>
-        </div>
-      ))}
-    </motion.div>
-  </div>
-);
+        </motion.div>
+      </AnimatePresence>
+      
+      {/* Indicators */}
+      <div className="absolute bottom-6 right-6 flex gap-2 z-10">
+        {items.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              idx === currentIndex ? "w-8 bg-white" : "w-2 bg-white/50 hover:bg-white/80"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 // Quick View Modal
 const QuickViewModal = ({ product, isOpen, onClose }) => (
@@ -384,22 +392,14 @@ const HomeScreen = () => {
               </div>
             </div>
 
-            {/* Right: Scrolling Vertical Marquees */}
+            {/* Right: Simple Slider */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5, delay: 0.5 }}
-              className="relative flex gap-8 justify-center h-full max-h-[80vh] overflow-hidden items-center"
+              className="relative w-full h-full flex items-center justify-center p-8"
             >
-              <VerticalMarquee
-                items={scrollingCategories.slice(0, 4)}
-                speed={40}
-              />
-              <VerticalMarquee
-                items={scrollingCategories.slice(4, 8)}
-                speed={50}
-                reverse
-              />
+              <SimpleHeroSlider items={scrollingCategories} />
             </motion.div>
           </div>
         </div>
