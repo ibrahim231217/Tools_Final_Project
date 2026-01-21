@@ -26,7 +26,7 @@ const ProductScreen = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
-  const [activeTab, setActiveTab] = useState("specs");
+  const [activeTab, setActiveTab] = useState("reviews");
 
   // Review form state
   const [rating, setRating] = useState(5);
@@ -189,18 +189,14 @@ const ProductScreen = () => {
                 </p>
 
                 <div className="flex items-center gap-3">
-                  <span
-                    className={`px-4 py-2 rounded-full text-sm font-bold ${product.countInStock > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}
-                  >
-                    {product.countInStock > 0
-                      ? `In Stock (${product.countInStock})`
-                      : "Out of Stock"}
+                  <span className="px-4 py-2 rounded-full text-sm font-bold bg-green-100 text-green-700">
+                    In Stock
                   </span>
                 </div>
               </div>
 
               {/* Actions */}
-              {product.countInStock > 0 && (
+              {true && (
                 <div className="p-8 glass-panel rounded-[30px] border border-[#2c2926]/5 bg-white/30 backdrop-blur-md mb-10">
                   <div className="flex items-center justify-between mb-8">
                     <span className="text-sm font-bold uppercase tracking-widest text-secondary">
@@ -217,9 +213,7 @@ const ProductScreen = () => {
                         {qty}
                       </span>
                       <button
-                        onClick={() =>
-                          setQty(Math.min(product.countInStock, qty + 1))
-                        }
+                        onClick={() => setQty(Math.min(99, qty + 1))}
                         className="text-xl text-primary hover:text-[#B08D55] w-8 h-8 flex items-center justify-center transition-colors"
                       >
                         +
@@ -252,7 +246,7 @@ const ProductScreen = () => {
           {/* Tabs */}
           <div>
             <div className="flex gap-8 border-b border-[#2c2926]/10 mb-8 justify-center">
-              {["specs", "reviews", "shipping"].map((tab) => (
+              {["reviews"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -277,47 +271,6 @@ const ProductScreen = () => {
                 exit={{ opacity: 0, y: -10 }}
                 className="text-secondary leading-relaxed min-h-[400px]"
               >
-                {activeTab === "specs" && (
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="flex items-center gap-3 p-6 glass-panel rounded-2xl">
-                      <Zap size={24} className="text-[#B08D55]" />
-                      <div>
-                        <span className="text-sm font-bold block text-primary">
-                          Premium Quality
-                        </span>
-                        <span className="text-xs">Certified excellence</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-6 glass-panel rounded-2xl">
-                      <Shield size={24} className="text-[#B08D55]" />
-                      <div>
-                        <span className="text-sm font-bold block text-primary">
-                          2-Year Warranty
-                        </span>
-                        <span className="text-xs">Full coverage included</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-6 glass-panel rounded-2xl">
-                      <Truck size={24} className="text-[#B08D55]" />
-                      <div>
-                        <span className="text-sm font-bold block text-primary">
-                          Express Shipping
-                        </span>
-                        <span className="text-xs">Fast & Secure delivery</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-6 glass-panel rounded-2xl">
-                      <RotateCcw size={24} className="text-[#B08D55]" />
-                      <div>
-                        <span className="text-sm font-bold block text-primary">
-                          30-Day Returns
-                        </span>
-                        <span className="text-xs">Hassle-free policy</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {activeTab === "reviews" && (
                   <div className="space-y-8 max-h-[60vh] overflow-y-auto pr-4 scrollbar-hide">
                     {/* Review List */}
@@ -416,7 +369,7 @@ const ProductScreen = () => {
                           <button
                             type="submit"
                             disabled={submittingReview}
-                            className="px-8 py-3 rounded-full bg-[#2c2926] text-white font-bold hover:bg-[#4a4540] transition-colors disabled:opacity-50"
+                            className="w-full py-4 rounded-full bg-[#2c2926] text-white font-bold text-lg hover:bg-[#4a4540] transition-colors disabled:opacity-50 shadow-lg"
                           >
                             {submittingReview
                               ? "Submitting..."
@@ -436,20 +389,6 @@ const ProductScreen = () => {
                         </p>
                       )}
                     </div>
-                  </div>
-                )}
-
-                {activeTab === "shipping" && (
-                  <div className="p-8 glass-panel text-center">
-                    <Truck size={48} className="mx-auto text-[#B08D55] mb-4" />
-                    <h3 className="text-xl font-bold text-primary mb-2">
-                      Premium Shipping
-                    </h3>
-                    <p>
-                      Complimentary express shipping on all orders over 20,000
-                      BDT. Secure packaging included to ensure your item arrives
-                      in pristine condition.
-                    </p>
                   </div>
                 )}
               </motion.div>

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const ContactScreen = () => {
   const [formData, setFormData] = useState({
@@ -9,11 +11,23 @@ const ContactScreen = () => {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 5000);
+    setLoading(true);
+
+    try {
+      await axios.post("/api/messages", formData);
+      setSubmitted(true);
+      setFormData({ name: "", email: "", message: "" });
+      toast.success("Message sent successfully!");
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to send message");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactInfo = [
@@ -86,8 +100,6 @@ const ContactScreen = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
               </div>
             </div> */}
-
-
           </div>
 
           {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-secondary/50">
@@ -96,8 +108,6 @@ const ContactScreen = () => {
             </span>
             <div className="w-[1px] h-8 bg-gradient-to-b from-secondary/50 to-transparent"></div>
           </div> */}
-
-
         </div>
       </section>
 
@@ -181,9 +191,10 @@ const ContactScreen = () => {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full py-5 rounded-full bg-[#2c2926] text-[#F2EFE9] font-bold text-xl hover:bg-[#4a4540] transition-all shadow-xl flex items-center justify-center gap-3 group"
+                  disabled={loading}
+                  className="w-full py-5 rounded-full bg-[#2c2926] text-[#F2EFE9] font-bold text-xl hover:bg-[#4a4540] transition-all shadow-xl flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span>Send Message</span>
+                  <span>{loading ? "Sending..." : "Send Message"}</span>
                   <ArrowRight
                     size={24}
                     className="group-hover:translate-x-1 transition-transform"

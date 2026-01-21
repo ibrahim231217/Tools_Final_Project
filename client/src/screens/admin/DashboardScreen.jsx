@@ -7,6 +7,7 @@ import {
   ArrowRight,
   LogOut,
   Users,
+  Mail,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
@@ -15,10 +16,8 @@ import axios from "axios";
 const DashboardScreen = () => {
   const { userInfo } = useAuth();
   const [statsData, setStatsData] = useState({
-   
     totalProducts: 0,
     totalUsers: 0,
-    
   });
   const [loading, setLoading] = useState(true);
 
@@ -59,11 +58,17 @@ const DashboardScreen = () => {
   ];
 
   return (
-    <div className="flex flex-col relative w-full tracking-wide">
+    <div className="min-h-screen w-full flex flex-col relative tracking-wide p-6">
       {/* Static Background - No Animations */}
 
-      <div className="w-full">
-        
+      <div className="w-full max-w-7xl mx-auto">
+        {/* Page Title */}
+        <div className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-2">
+            Dashboard
+          </h1>
+          <p className="text-secondary">Welcome to your admin dashboard</p>
+        </div>
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           {stats.map((stat, index) => (
@@ -136,7 +141,25 @@ const DashboardScreen = () => {
                   />
                 </div>
               </Link>
-
+              <Link
+                to="/admin/messages"
+                className="p-6 rounded-2xl bg-white/50 border border-[#2c2926]/5 hover:bg-white hover:border-[#B08D55]/30 transition-all group"
+              >
+                <Mail
+                  className="text-secondary mb-4 group-hover:text-[#B08D55] transition-colors"
+                  size={24}
+                />
+                <h4 className="font-bold text-primary mb-1">
+                  Contact Messages
+                </h4>
+                <div className="flex items-center text-xs text-secondary font-medium group-hover:text-[#B08D55]">
+                  <span>View All</span>{" "}
+                  <ArrowRight
+                    size={12}
+                    className="ml-1 group-hover:translate-x-1 transition-transform"
+                  />
+                </div>
+              </Link>
             </div>
           </motion.div>
         </div>

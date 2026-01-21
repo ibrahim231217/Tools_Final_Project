@@ -1,28 +1,32 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-key",
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "demo.firebaseapp.com",
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project",
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "demo.appspot.com",
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase only if valid config exists
-let app;
-let auth;
-let googleProvider;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    googleProvider = new GoogleAuthProvider();
-} catch (error) {
-    console.warn('Firebase not configured properly, social auth disabled:', error.message);
-    auth = null;
-    googleProvider = null;
-}
+// Initialize Services
+export const auth = getAuth(app);
 
-export { auth, googleProvider };
+// --- Google Configuration ---
+export const googleProvider = new GoogleAuthProvider();
+// Force account selection for Google
+googleProvider.setCustomParameters({ 
+    prompt: 'select_account' 
+});
+
+// --- GitHub Configuration ---
+export const githubProvider = new GithubAuthProvider();
+// GitHub doesn't strictly support 'select_account' in the same way, 
+// but 'allow_signup' ensures the flow is interactive.
+githubProvider.setCustomParameters({ 
+    allow_signup: 'true' 
+});
